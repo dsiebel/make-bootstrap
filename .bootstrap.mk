@@ -87,7 +87,13 @@ help: ## Display this help
 	printf "\n\033[0;33mOptions:\033[0m\n    \033[0;32m%-$${pad}s\033[0m Set mode to 1 for verbose output \033[0;33m[default: 0]\033[0m\n\n" 'VERBOSE=<mode>'
 .PHONY: help
 
-# alternative, simpler help goal (requires comments _before_ the rule):
+# Alternative `help` goals
+
+# Simple version using `sed`. Requires comment _before_ the target declaration
 ## help: display this help
 # help: Makefile
 # 	@sed -n 's/^##//p' $<
+
+# Another simple but sophisticated version using `awk`that supports sections via `##@`.
+# help:
+#	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[.a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
