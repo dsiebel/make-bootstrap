@@ -48,7 +48,7 @@ SHELL       := bash
 # Determine the root directory of our codebase and export it, this allows easy
 # file inclusion in both Bash and Make.
 override ROOT := $(shell path="$(CURDIR)"; while [[ "$${path}" != "/" \
- && ! -f "$${path}/.root.mk" ]]; do path="$${path%/*}"; done; echo "$${path}")
+ && ! -f "$${path}/.bootstrap.mk" ]]; do path="$${path%/*}"; done; echo "$${path}")
 
 # A generic help message that parses the available targets, and lists each one
 # that has a comment on the same line with a ## prefix.
