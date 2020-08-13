@@ -53,37 +53,34 @@ override ROOT := $(shell path="$(CURDIR)"; while [[ "$${path}" != "/" \
 # A generic help message that parses the available targets, and lists each one
 # that has a comment on the same line with a ## prefix.
 help: ## Display this help
-	readonly pad=25
-	targets() {
-		local targets=()
-		local pattern='[^:]+:[^#]*## .*'
-
-		for mk in "$$@"; do
-			while read -r line; do
-				if [[ "$${line}" =~ $${pattern} ]]; then
-					targets+=("$${line}")
-				fi
-			done < "$${mk}"
-		done
-
-		readarray -t targets < <(for t in "$${targets[@]}"; do echo "$$t"; done | sort -d)
-
-		for target in "$${targets[@]}"; do
-			printf "    \033[0;32m%-$${pad}s\033[0m %s\n" "$${target%%:*}" "$${target##*## }"
-		done
-	}
-
-	echo
-	echo -e "\033[0;33mUsage:\033[0m
-		make [flags...] [target...] [options...]
-
-	\033[0;33mFlags:\033[0m
-		See \033[1;30mmake --help\033[0m
-
-	\033[0;33mTargets:\033[0m"
-
-	targets $(MAKEFILE_LIST)
-
+	readonly pad=25; \
+	targets=(); \
+	pattern='[^:]+:[^#]*## .*'; \
+	makefiles=($(MAKEFILE_LIST)); \
+	\
+	echo; \
+	echo -e "\033[0;33mUsage:\033[0m\n\
+		make [flags...] [target...] [options...]\n\
+	\n\
+	\033[0;33mFlags:\033[0m\n\
+		See \033[1;30mmake --help\033[0m\n\
+	\n\
+	\033[0;33mTargets:\033[0m"; \
+	\
+	for mk in "$${makefiles[@]}"; do \
+		while read -r line; do \
+			if [[ "$${line}" =~ $${pattern} ]]; then \
+				targets+=("$${line}"); \
+			fi \
+		done < "$${mk}"; \
+	done; \
+	\
+	readarray -t targets < <(for t in "$${targets[@]}"; do echo "$$t"; done | sort -d); \
+	\
+	for target in "$${targets[@]}"; do \
+		printf "    \033[0;32m%-$${pad}s\033[0m %s\n" "$${target%%:*}" "$${target##*## }"; \
+	done; \
+	\
 	printf "\n\033[0;33mOptions:\033[0m\n    \033[0;32m%-$${pad}s\033[0m Set mode to 1 for verbose output \033[0;33m[default: 0]\033[0m\n\n" 'VERBOSE=<mode>'
 .PHONY: help
 
