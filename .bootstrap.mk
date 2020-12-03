@@ -94,3 +94,13 @@ help: ## Display this help
 # Another simple but sophisticated version using `awk`that supports sections via `##@`.
 # help:
 #	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[.a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+
+# Target to update make-bootstrap once installed
+self-update: ## update make-bootstrap
+	echo "backing up existing bootstrap file..."
+	cp .bootstrap.mk ".bootstrap.mk.$(shell date +%s)"
+	echo "downloading latest version from github.com/dsiebel/make-bootstrap (master)"
+	curl --location --retry 3 --show-error --silent --output .bootstrap.mk \
+	 "https://raw.githubusercontent.com/dsiebel/make-bootstrap/master/.bootstrap.mk"
+	 echo "done!"
+.PHONY: self-update
