@@ -28,7 +28,7 @@ include .bootstrap.mk
 The bootstrap file provides a `self-update` target, which essentially
 executes the same cURL seen above under "Installation":
 
-```
+```sh
 $ make self-update
 backing up existing bootstrap file...
 downloading latest version from github.com/dsiebel/make-bootstrap (master)
