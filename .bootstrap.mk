@@ -55,7 +55,7 @@ override ROOT := $(shell path="$(CURDIR)"; while [[ "$${path}" != "/" \
 # A generic help message that parses the available targets, and lists each one
 # that has a comment on the same line with a ## prefix.
 help: ## Display this help
-	readonly pad=$$(printf "%0.1s" "-"{1..25}); \
+	readonly pad=$$(printf "%0.1s" "_"{1..25}); \
 	print_targets() { \
 		local -n targets_ref=$$1; \
 		if (( "$${#targets_ref[@]}" > 0 )); then \
@@ -83,13 +83,16 @@ help: ## Display this help
 					if [ "$${targets[$${target}]+x}" ]; then \
 						targets["$${target}"]+=$$(printf "\n    %$${#pad}s  %s\n" "" "$${comment}"); \
 					else \
-						targets["$${target}"]=$$(printf "    \033[0;32m%s\033[0m %s %s\n" "$${target}" "$${pad:$${#target}}" "$${comment}"); \
+						targets["$${target}"]=$$(printf "    \033[0;32m%s\033[0m \033[0;90m%s\033[0m %s\n" "$${target}" "$${pad:$${#target}}" "$${comment}"); \
 					fi; \
 				fi; \
 			done < "$${mk}"; \
 			print_targets targets; \
 			targets=(); \
 		done; \
+	}; \
+	print_option() { \
+		printf "    \033[0;32m%s\033[0m \033[0;90m%s\033[0m %s \033[0;33m[default: %s]\033[0m\n\n" "$$1" "$${pad:$${#1}}" "$$2" "$$3"; \
 	}; \
 	echo; \
 	echo -e "\033[0;33mUsage:\033[0m"; \
@@ -100,7 +103,8 @@ help: ## Display this help
 	echo; \
 	echo -e "\033[0;33mTargets:\033[0m"; \
 	targets $(MAKEFILE_LIST); \
-	printf "\n\033[0;33mOptions:\033[0m\n    \033[0;32m%-$${pad}s\033[0m Set mode to 1 for verbose output \033[0;33m[default: 0]\033[0m\n\n" 'VERBOSE=<mode>'
+	echo -e "\n\033[0;33mOptions:\033[0m"; \
+	print_option 'VERBOSE=<mode>' 'Set mode to 1 for verbose output' '0'
 .PHONY: help
 
 # Target to update make-bootstrap once installed
