@@ -55,54 +55,51 @@ override ROOT := $(shell path="$(CURDIR)"; while [[ "$${path}" != "/" \
 # A generic help message that parses the available targets, and lists each one
 # that has a comment on the same line with a ## prefix.
 help: ## Display this help
-	readonly pad=$$(printf "%0.1s" "-"{1..25})
-	print_targets() {
-		local -n targets_ref=$$1
-		if (( "$${#targets_ref[@]}" > 0 )); then
-			declare -a keys=()
-			readarray -t keys < <(printf "%s\n" "$${!targets_ref[@]}" | sort -d)
-			for target in "$${keys[@]}"; do
-				printf "%s\n" "$${targets_ref[$$target]}"
-			done
-		fi
-	}
-	targets() {
-		declare -A targets=()
-		local target_pattern='[^:]+::?[^#]*## +.*'
-		local section_pattern='^## .*'
-		for mk in "$$@"; do
-			while read -r line; do
-				if [[ "$${line}" =~ $${section_pattern} ]]; then
-					print_targets targets
-					targets=()
-					local comment="$${line##*## }"
-					printf "  \033[1m%s\033[0m\n" "$${comment}"
-				elif [[ "$${line}" =~ $${target_pattern} ]]; then
-					local target="$${line%%:*}"
-					local comment="$${line##*## }"
-					if [ "$${targets[$${target}]+x}" ]; then
-						targets["$${target}"]+=$$(printf "\n    %$${#pad}s  %s\n" "" "$${comment}")
-					else
-						targets["$${target}"]=$$(printf "    \033[0;32m%s\033[0m %s %s\n" "$${target}" "$${pad:$${#target}}" "$${comment}")
-					fi
-				fi
-			done < "$${mk}"
-			print_targets targets
-			targets=()
-		done
-	}
-
-	echo
-	echo -e "\033[0;33mUsage:\033[0m"
-	echo -e "    make [flags...] [target...] [options...]"
-	echo
-	echo -e "\033[0;33mFlags:\033[0m"
-	echo -e "    See \033[1mmake --help\033[0m"
-	echo
-	echo -e "\033[0;33mTargets:\033[0m"
-
-	targets $(MAKEFILE_LIST)
-
+	readonly pad=$$(printf "%0.1s" "-"{1..25}); \
+	print_targets() { \
+		local -n targets_ref=$$1; \
+		if (( "$${#targets_ref[@]}" > 0 )); then \
+			declare -a keys=(); \
+			readarray -t keys < <(printf "%s\n" "$${!targets_ref[@]}" | sort -d); \
+			for target in "$${keys[@]}"; do \
+				printf "%s\n" "$${targets_ref[$$target]}"; \
+			done; \
+		fi; \
+	}; \
+	targets() { \
+		declare -A targets=(); \
+		local target_pattern='[^:]+::?[^#]*## +.*'; \
+		local section_pattern='^## .*'; \
+		for mk in "$$@"; do \
+			while read -r line; do \
+				if [[ "$${line}" =~ $${section_pattern} ]]; then \
+					print_targets targets; \
+					targets=(); \
+					local comment="$${line##*## }"; \
+					printf "  \033[1m%s\033[0m\n" "$${comment}"; \
+				elif [[ "$${line}" =~ $${target_pattern} ]]; then \
+					local target="$${line%%:*}"; \
+					local comment="$${line##*## }"; \
+					if [ "$${targets[$${target}]+x}" ]; then \
+						targets["$${target}"]+=$$(printf "\n    %$${#pad}s  %s\n" "" "$${comment}"); \
+					else \
+						targets["$${target}"]=$$(printf "    \033[0;32m%s\033[0m %s %s\n" "$${target}" "$${pad:$${#target}}" "$${comment}"); \
+					fi; \
+				fi; \
+			done < "$${mk}"; \
+			print_targets targets; \
+			targets=(); \
+		done; \
+	}; \
+	echo; \
+	echo -e "\033[0;33mUsage:\033[0m"; \
+	echo -e "    make [flags...] [target...] [options...]"; \
+	echo; \
+	echo -e "\033[0;33mFlags:\033[0m"; \
+	echo -e "    See; \033[1mmake --help\033[0m" \
+	echo; \
+	echo -e "\033[0;33mTargets:\033[0m"; \
+	targets $(MAKEFILE_LIST); \
 	printf "\n\033[0;33mOptions:\033[0m\n    \033[0;32m%-$${pad}s\033[0m Set mode to 1 for verbose output \033[0;33m[default: 0]\033[0m\n\n" 'VERBOSE=<mode>'
 .PHONY: help
 
