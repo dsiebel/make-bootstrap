@@ -99,7 +99,7 @@ help: ## Display this help
 	echo -e "    make [flags...] [target...] [options...]"; \
 	echo; \
 	echo -e "\033[0;33mFlags:\033[0m"; \
-	echo -e "    See; \033[1mmake --help\033[0m" \
+	echo -e "    See: \033[1mmake --help\033[0m"; \
 	echo; \
 	echo -e "\033[0;33mTargets:\033[0m"; \
 	targets $(MAKEFILE_LIST); \
